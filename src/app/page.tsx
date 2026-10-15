@@ -612,7 +612,7 @@ export default function CardGamePage() {
               <div className="flex justify-between items-center text-xs sm:text-sm font-semibold">
                 <span className="text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
                   <Timer className="w-4 h-4 text-indigo-500" />
-                  완료 시간
+                  완료까지 걸린 시간
                 </span>
                 <span className="text-lg sm:text-xl font-mono font-black text-indigo-600 dark:text-indigo-400">
                   {formatTime(elapsedTime)}
@@ -668,12 +668,12 @@ export default function CardGamePage() {
               </div>
             )}
 
-            {/* 🏆 TOP 3 명예의 전당 (가장 빠른 종료시간 순) */}
+            {/* 🏆 TOP 3 명예의 전당 */}
             <div className="w-full bg-black/5 dark:bg-white/5 rounded-2xl p-4 border border-zinc-200/50 dark:border-zinc-700/60 mb-6 text-left">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200 flex items-center gap-1.5">
                   <Trophy className="w-4 h-4 text-amber-500" />
-                  명예의 전당 (가장 빠른 기록 TOP 3)
+                  명예의 전당 (완료까지 걸린 시간 TOP 3)
                 </span>
                 {isLoadingRank && (
                   <span className="text-[10px] text-zinc-400 animate-pulse">
@@ -717,11 +717,11 @@ export default function CardGamePage() {
                         </div>
 
                         <div className="text-right">
+                          <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
+                            걸린 시간
+                          </div>
                           <div className="font-mono text-xs font-extrabold text-indigo-600 dark:text-indigo-400">
                             ⏱ {item.finishtime}
-                          </div>
-                          <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">
-                            {medalLabels[idx]}
                           </div>
                         </div>
                       </div>
