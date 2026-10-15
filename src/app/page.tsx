@@ -651,7 +651,7 @@ export default function CardGamePage() {
                   <Timer className="w-4 h-4 text-indigo-500" />
                   완료까지 걸린 시간
                 </span>
-                <span className="text-lg sm:text-xl font-mono font-black text-indigo-600 dark:text-indigo-400">
+                <span className="text-sm sm:text-base font-black text-black dark:text-white">
                   {formatSecondsOnly(elapsedTime)}
                 </span>
               </div>
@@ -757,7 +757,7 @@ export default function CardGamePage() {
                           <div className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">
                             완료까지 걸린 시간
                           </div>
-                          <div className="font-mono text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
+                          <div className="text-xs sm:text-sm font-black text-black dark:text-white">
                             ⏱ {formatSecondsOnly(item.finishtime)}
                           </div>
                         </div>
