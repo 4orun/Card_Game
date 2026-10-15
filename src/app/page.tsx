@@ -347,38 +347,41 @@ export default function CardGamePage() {
     return `${mins.toString().padStart(2, "0")}.${secs.toString().padStart(2, "0")}`;
   };
 
-  // 구글 시트에서 넘어온 값을 '00.00' 형태로 정제
-  const formatDuration = (val: string | number) => {
-    if (!val) return "00.00";
+  // 클리어 화면용: 소수점이나 분/초 복잡한 형식 없이 '00초' 형태로 통일
+  const formatSecondsOnly = (val: string | number) => {
+    if (!val && val !== 0) return "0초";
     const str = String(val).trim();
 
-    // 1. 이미 "mm.ss" 형식인 경우
-    if (/^\d{1,2}\.\d{2}$/.test(str)) {
-      const [m, s] = str.split(".");
-      return `${m.padStart(2, "0")}.${s.padStart(2, "0")}`;
+    // 1. 순수 숫자(초 단위)인 경우
+    if (/^\d+$/.test(str)) {
+      return `${parseInt(str, 10)}초`;
     }
 
-    // 2. "mm:ss" 형식인 경우 -> "mm.ss"로 변환
-    if (/^\d{1,2}:\d{2}$/.test(str)) {
-      const [m, s] = str.split(":");
-      return `${m.padStart(2, "0")}.${s.padStart(2, "0")}`;
+    // 2. "mm.ss" 또는 "mm:ss" 형식인 경우 -> 총 초(seconds)로 변환
+    if (/^\d{1,2}[\.:]\d{1,2}$/.test(str)) {
+      const parts = str.split(/[\.:]/);
+      const m = parseInt(parts[0], 10) || 0;
+      const s = parseInt(parts[1], 10) || 0;
+      return `${m * 60 + s}초`;
     }
 
-    // 3. 구글 시트 자동 날짜 변환 ("Sat Dec 30 1899 00:26:00 GMT..." 등)인 경우
+    // 3. 구글 시트 Date 객체 문자열 ("Sat Dec 30 1899 00:26:00 GMT..." 등)인 경우
     const dateParsed = new Date(str);
     if (!isNaN(dateParsed.getTime())) {
-      const minutes = dateParsed.getMinutes().toString().padStart(2, "0");
-      const seconds = dateParsed.getSeconds().toString().padStart(2, "0");
-      return `${minutes}.${seconds}`;
+      const m = dateParsed.getMinutes();
+      const s = dateParsed.getSeconds();
+      return `${m * 60 + s}초`;
     }
 
-    // 4. 단순 초 단위 숫자일 경우
-    const num = Number(str);
-    if (!isNaN(num)) {
-      return formatTime(num);
+    // 4. "00초" 이미 붙어있는 경우
+    if (str.endsWith("초")) return str;
+
+    const parsedNum = parseFloat(str);
+    if (!isNaN(parsedNum)) {
+      return `${Math.round(parsedNum)}초`;
     }
 
-    return str.replace(":", ".");
+    return `${str}초`;
   };
 
   return (
@@ -649,7 +652,7 @@ export default function CardGamePage() {
                   완료까지 걸린 시간
                 </span>
                 <span className="text-lg sm:text-xl font-mono font-black text-indigo-600 dark:text-indigo-400">
-                  {formatTime(elapsedTime)}
+                  {formatSecondsOnly(elapsedTime)}
                 </span>
               </div>
 
@@ -755,7 +758,7 @@ export default function CardGamePage() {
                             완료까지 걸린 시간
                           </div>
                           <div className="font-mono text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
-                            ⏱ {formatDuration(item.finishtime)}
+                            ⏱ {formatSecondsOnly(item.finishtime)}
                           </div>
                         </div>
                       </div>
