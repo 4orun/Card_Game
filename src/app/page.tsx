@@ -347,6 +347,34 @@ export default function CardGamePage() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // 구글 시트에서 날짜 객체(Date string 등)로 변환된 값을 순수 'mm:ss' 형태로 깔끔하게 정제
+  const formatDuration = (val: string | number) => {
+    if (!val) return "00:00";
+    const str = String(val).trim();
+
+    // 1. 이미 "mm:ss" 형식인 경우
+    if (/^\d{1,2}:\d{2}$/.test(str)) {
+      const [m, s] = str.split(":");
+      return `${m.padStart(2, "0")}:${s.padStart(2, "0")}`;
+    }
+
+    // 2. 구글 시트가 자동 날짜 변환하여 "Sat Dec 30 1899 00:26:00 GMT..." 또는 ISO 문자열이 된 경우
+    const dateParsed = new Date(str);
+    if (!isNaN(dateParsed.getTime())) {
+      const minutes = dateParsed.getMinutes().toString().padStart(2, "0");
+      const seconds = dateParsed.getSeconds().toString().padStart(2, "0");
+      return `${minutes}:${seconds}`;
+    }
+
+    // 3. 단순 초 단위 숫자일 경우
+    const num = Number(str);
+    if (!isNaN(num)) {
+      return formatTime(num);
+    }
+
+    return str;
+  };
+
   return (
     <div
       className={`min-h-screen flex flex-col justify-between transition-colors duration-500 ${
@@ -717,11 +745,11 @@ export default function CardGamePage() {
                         </div>
 
                         <div className="text-right">
-                          <div className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
-                            걸린 시간
+                          <div className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">
+                            완료까지 걸린 시간
                           </div>
-                          <div className="font-mono text-xs font-extrabold text-indigo-600 dark:text-indigo-400">
-                            ⏱ {item.finishtime}
+                          <div className="font-mono text-sm font-extrabold text-indigo-600 dark:text-indigo-400">
+                            ⏱ {formatDuration(item.finishtime)}
                           </div>
                         </div>
                       </div>
